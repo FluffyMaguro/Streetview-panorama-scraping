@@ -1,7 +1,7 @@
 # Streetview-panorama-scraping
  This module helps you scrape panoramas from Google's streetview for given area.
 
- Scraping is asynchronous using aiohttp and asyncio modules for good speed.
+ Scraping is done asynchronously using aiohttp and asyncio packages.
 
 The module is built upon and modifies streetview module - https://github.com/robolyst/streetview
 
@@ -11,6 +11,6 @@ The module is built upon and modifies streetview module - https://github.com/rob
 
 <img width="100%" alt="Drag the layout file to OBS" src="https://i.imgur.com/DzjSq7a.png">
 
-3. Running `2_download_panoramas.py` will start downloading panoramas to a directory
+3. Running `2_download_panoramas.py` will start downloading panoramas to a  `panoramas/` directory
 
 <img width="100%" alt="Drag the layout file to OBS" src="https://i.imgur.com/MDsnjX3.jpg">
