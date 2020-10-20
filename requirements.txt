@@ -1,0 +1,16 @@
+aiohttp==3.6.3
+async-timeout==3.0.1
+attrs==20.2.0
+branca==0.4.1
+certifi==2020.6.20
+chardet==3.0.4
+folium==0.11.0
+idna==2.10
+Jinja2==2.11.2
+MarkupSafe==1.1.1
+multidict==4.7.6
+numpy==1.19.2
+Pillow==8.0.0
+requests==2.24.0
+urllib3==1.25.11
+yarl==1.5.1
