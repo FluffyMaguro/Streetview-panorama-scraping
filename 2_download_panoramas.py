@@ -1,8 +1,7 @@
-import os
-import json
 import asyncio
+import json
+import os
 import traceback
-from pprint import pprint
 
 import aiohttp
 
@@ -14,6 +13,7 @@ async def download_tiles_async(tiles, directory, session):
 
     for i, (x, y, fname, url) in enumerate(tiles):
         # Try to download the image file
+        url = url.replace("http://", "https://")
         while True:
             try:
                 async with session.get(url) as response:
@@ -25,7 +25,10 @@ async def download_tiles_async(tiles, directory, session):
                 print(traceback.format_exc())
 
 
-async def download_panorama(panoid, session=None, tile_diretory = 'tiles', pano_directory = 'panoramas'):
+async def download_panorama(panoid,
+                            session=None,
+                            tile_diretory='tiles',
+                            pano_directory='panoramas'):
     """ 
     Downloads a panorama from latitude and longitude
     Heavily IO bound (~98%), ~40s per panorama without using asyncio.
@@ -38,7 +41,11 @@ async def download_panorama(panoid, session=None, tile_diretory = 'tiles', pano_
     try:
         x = streetview.tiles_info(panoid['panoid'])
         await download_tiles_async(x, tile_diretory, session)
-        streetview.stich_tiles(panoid['panoid'], x, tile_diretory, pano_directory, point=(panoid['lat'],panoid['lon']))
+        streetview.stich_tiles(panoid['panoid'],
+                               x,
+                               tile_diretory,
+                               pano_directory,
+                               point=(panoid['lat'], panoid['lon']))
         streetview.delete_tiles(x, tile_diretory)
 
     except:
@@ -48,15 +55,19 @@ async def download_panorama(panoid, session=None, tile_diretory = 'tiles', pano_
 def panoid_created(panoid):
     """ Checks if the panorama was already created """
     file = f"{panoid['lat']}_{panoid['lon']}_{panoid['panoid']}.jpg"
-    return os.path.isfile(os.path.join('panoramas',file))
+    return os.path.isfile(os.path.join('panoramas', file))
 
 
 async def download_loop(panoids, pmax):
     """ Main download loop """
     conn = aiohttp.TCPConnector(limit=100)
-    async with aiohttp.ClientSession(connector=conn, auto_decompress=False) as session:
+    async with aiohttp.ClientSession(connector=conn,
+                                     auto_decompress=False) as session:
         try:
-            await asyncio.gather(*[download_panorama(panoid, session=session) for panoid in panoids[:pmax] if not panoid_created(panoid)])
+            await asyncio.gather(*[
+                download_panorama(panoid, session=session)
+                for panoid in panoids[:pmax] if not panoid_created(panoid)
+            ])
         except:
             print(traceback.format_exc())
 
@@ -69,10 +80,8 @@ if __name__ == "__main__":
 
     print(f"Loaded {len(panoids)} panoids")
 
-
     # Download panorama in batches of 100
     loop = asyncio.get_event_loop()
-    for i in range(1,100):
+    for i in range(1, 100):
         print(f'Running the next batch: {(i-1)*100+1} → {i*100}')
-        loop.run_until_complete(download_loop(panoids,100*i))
-    
+        loop.run_until_complete(download_loop(panoids, 100 * i))
